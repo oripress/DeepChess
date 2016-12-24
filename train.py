@@ -4,22 +4,22 @@ import numpy as np
 import math
 from loader import *
 
-TRAIN_AUTOENCODER = 1 
+TRAIN_AUTOENCODER = 0 
 TRAIN_NET = 1
 
-TOTAL_AE = 1000000
-TOTAL_MLP = 1000000
+TOTAL_AE = 250000
+TOTAL_MLP = 400000
 
 BS_AE = 20
-BS_MLP = 20
-EPOCHS_AE = 200 
+BS_MLP = 50
+EPOCHS_AE = 50 
 EPOCHS_MLP = 1000 
 RATE_AE = 0.005
 DECAY_AE = 0.98
 RATE_MLP = 0.01
 DECAY_MLP = 0.99
 
-BIAS = 0.15
+BIAS = 0.0
 
 N_INPUT = 769 
 ENCODING_1 = 600 
@@ -43,7 +43,7 @@ whiteWins, blackWins = getTrain(N_INPUT, TOTAL_MLP, VOLUME_SIZE)
 
 # init
 def weight_variable(n_in, n_out):
-  cur_dev = math.sqrt(3.0/n_in)
+  cur_dev = math.sqrt(3.0/(n_in+n_out))
   initial = tf.truncated_normal([n_in, n_out], stddev=cur_dev)
   return tf.Variable(initial)
 
@@ -124,7 +124,7 @@ biases = {
 
 def fully_connected(current_layer, weight, bias):
 	next_layer = tf.add(tf.matmul(current_layer, weight), bias)
-	next_layer = tf.nn.relu(next_layer)
+	next_layer = tf.maximum(0.01*next_layer, next_layer)
 	return next_layer
 
 def encode(c, weights, biases, level):	
@@ -144,11 +144,11 @@ def encode(c, weights, biases, level):
 	return e4
 
 def decode(d, weights, biases, level):
-	pred  = tf.nn.relu(tf.add(tf.matmul(d, weights['d'+ str(5-level)]), biases['d' + str(5-level)]))
+	pred  = fully_connected(d, weights['d'+ str(5-level)], biases['d' + str(5-level)])
 	return pred
 
 def singleEncode(c, weights, biases, level):
-	pred  = tf.nn.relu(tf.add(tf.matmul(c, weights['e'+ str(level)]), biases['e' + str(level)]))
+	pred  = fully_connected(c, weights['e'+ str(level)], biases['e' + str(level)])
 	return pred
 
 def model(games, weights, biases):
@@ -196,7 +196,7 @@ ae_train_step_4 = tf.train.GradientDescentOptimizer(learning_rate=learning_rate)
 y = model(x, weights, biases)
 
 cross_entropy = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(y,y_))
-mlp_train_step = tf.train.GradientDescentOptimizer(learning_rate=learning_rate).minimize(cross_entropy)
+mlp_train_step = tf.train.AdagradOptimizer(learning_rate=learning_rate).minimize(cross_entropy)
 
 init = tf.initialize_all_variables()
 saver = tf.train.Saver()
@@ -259,7 +259,7 @@ with tf.Session() as sess:
 				_, cost = sess.run([mlp_train_step, cross_entropy], feed_dict={x: batch_xs, y_:batch_ys, learning_rate: cur_rate})
 
 			print("MLP Epoch:", '%04d' % (epoch+1),
-			"cost=", "{:.9f}".format(cost))
+			"cost=", "{:.9f}".format(cost))a
 
 			model = td.Model()
 			model.add(y, sess)
