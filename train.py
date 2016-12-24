@@ -259,7 +259,7 @@ with tf.Session() as sess:
 				_, cost = sess.run([mlp_train_step, cross_entropy], feed_dict={x: batch_xs, y_:batch_ys, learning_rate: cur_rate})
 
 			print("MLP Epoch:", '%04d' % (epoch+1),
-			"cost=", "{:.9f}".format(cost))a
+			"cost=", "{:.9f}".format(cost))
 
 			model = td.Model()
 			model.add(y, sess)
