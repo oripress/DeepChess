@@ -3,11 +3,11 @@ import pickle
 import random
 from util import *
 
-def getTest(input_size):
+def getTest(input_size, start, finish):
 	test = []
 	test_l = []
 
-	for i in range(40,44):
+	for i in range(start, finish):
 		name = 'pGames/volume' + str(i) + '.p'
 		t = open(name)
 		cur_dict = pickle.load(t)	

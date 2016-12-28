@@ -12,8 +12,6 @@ def netPredict(first, second, isWhite):
 	global model
 	global x
 	global y
-	#print(first)
-	#print(second)
 	x_1 = bitifyFEN(beautifyFEN(first.fen()))
 	x_2 = bitifyFEN(beautifyFEN(second.fen()))
 	toEval = [[x_1], [x_2]]
@@ -70,7 +68,7 @@ def alphabeta(node, depth, alpha, beta, maximizingPlayer, color):
 		return v 
 
 def computerMove(board):
-	depth = 2 
+	depth = 4 
 	color = True
 	alpha = -1
 	beta = 1
@@ -78,8 +76,6 @@ def computerMove(board):
 	for move in board.legal_moves:
 		cur = copy.copy(board)
 		cur.push(move)
-		#print('alpha is')
-		#print(alpha)
 		if v == -1:
 			v = cur
 			bestMove = move
