@@ -13,6 +13,15 @@ def netPredict(first, second):
 	global x
 	global y
 
+	if first is int:
+		print(first)
+		print(second)
+		return (second, first)
+	if second is int:
+		print(first)
+		print(second)
+		return (first, second)
+
 	x_1 = bitifyFEN(beautifyFEN(first.fen()))
 	x_2 = bitifyFEN(beautifyFEN(second.fen()))
 	toEval = [[x_1], [x_2]]
@@ -33,9 +42,8 @@ def alphabeta(node, depth, alpha, beta, maximizingPlayer):
 			cur.push(move)
 			if v == -1:
 				v = cur
-				bestMove = move
 			else:
-				v = netPredict(alphabeta(cur, depth-1, alpha, beta, False), v)[0]
+				v = netPredict(v, alphabeta(cur, depth-1, alpha, beta, False))[0]
 			if alpha == -1:
 				alpha = v
 			else:
@@ -52,7 +60,7 @@ def alphabeta(node, depth, alpha, beta, maximizingPlayer):
 			if v == 1:
 				v = cur
 			else:
-				v = netPredict(alphabeta(cur, depth-1, alpha, beta, True), v)[1]
+				v = netPredict(v, alphabeta(cur, depth-1, alpha, beta, True))[1]
 			if beta == 1:
 				beta = v
 			else:
@@ -74,14 +82,14 @@ def computerMove(board):
 			v = cur
 			bestMove = move
 		else:
-			v = netPredict(alphabeta(cur, depth-1, alpha, beta, False), v)[0]
+			new_v = netPredict(alphabeta(cur, depth-1, alpha, beta, False), v)[0]
+			if new_v != v:
+				bestMove = move
+				v = new_v
 			if alpha == -1:
 				alpha = v
 			else:
-				newAlpha = netPredict(alpha, v)[0] 
-				if newAlpha != alpha:
-					bestMove = move
-					alpha = newAlpha
+				alpha = netPredict(alpha, v)[0] 
 	print(bestMove)	
 	board.push(bestMove)
 	return board
