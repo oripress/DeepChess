@@ -39,7 +39,6 @@ export_path = 'net/exports'
 
 #Get the data from the game files
 validation_test, validation_test_l = getTest(N_INPUT, 10, 14)
-train_test, train_test_l = getTest(N_INPUT, 40, 44)
 whiteWins, blackWins = getTrain(N_INPUT, TOTAL_MLP, VOLUME_SIZE)
 
 # init
@@ -163,9 +162,9 @@ def model(games, weights, biases):
 	h_1 = tf.concat(1, [firstboard_encoding,secondboard_encoding])
 	h_2 = fully_connected(h_1, weights['w1'], biases['b1'])
 	h_3 = fully_connected(h_2, weights['w2'], biases['b2'])
-	h_4 = fully_connected(h_3, weights['w3'], biases['b3'])
+	#h_4 = fully_connected(h_3, weights['w3'], biases['b3'])
 
-	pred = tf.add(tf.matmul(h_4, weights['w4']), biases['out'], name="output")
+	pred = tf.add(tf.matmul(h_3, weights['w4']), biases['out'], name="output")
 	return pred
 
 
@@ -197,7 +196,7 @@ ae_train_step_4 = tf.train.GradientDescentOptimizer(learning_rate=learning_rate)
 y = model(x, weights, biases)
 
 cross_entropy = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(y,y_))
-mlp_train_step = tf.train.AdagradOptimizer(learning_rate=learning_rate).minimize(cross_entropy)
+mlp_train_step = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(cross_entropy)
 
 init = tf.initialize_all_variables()
 saver = tf.train.Saver()
@@ -271,6 +270,9 @@ with tf.Session() as sess:
 				accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 				v_acc = sess.run(accuracy, feed_dict = {x: validation_test, y_: validation_test_l})
 				print("Validation accuracy", "{:.9f}".format(v_acc))
-				t_acc = sess.run(accuracy, feed_dict = {x: train_test, y_: train_test_l})
-				print("Train accuracy", "{:.9f}".format(t_acc))
+		
+		#This code can be used to check the training accuracy
+		#train_test, train_test_l = getTest(N_INPUT, 0, 40)
+		#t_acc = sess.run(accuracy, feed_dict = {x: train_test, y_: train_test_l})
+		#print("Train accuracy", "{:.9f}".format(t_acc))
 
