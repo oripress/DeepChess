@@ -2,11 +2,19 @@
 
 I came across [DeepChess](http://www.cs.tau.ac.il/~wolf/papers/deepchess.pdf) and decided to implement it to learn TensorFlow and to experiment with Deep Learning methods.
 
-Please note: while the program is available to play, I've never actually trained the full network with the full amount of games available, because of time constraints. I'm currently still training the network and will update this page with the results when they come in.
-**Update: Achieved 97.2% accuracy on the validation set** 
 ###To play:###
 Install [python-chess](https://pypi.python.org/pypi/python-chess), and then from the main directory, run: `python game.py`
 
+###To train:###
+This model was trained with:
+- CUDA 7.5
+- Tensorflow 0.10.0
+
+Run `python train.py` to train the model on the data available in the folder 'pGames'
+Some older network checkpoints can be found in the folder 'net'.
+
+###To mine a different dataset:###
+Run `python get_data.py`, but be sure to change the file name in the source code.
 
 ###Some notes:####
 The basic idea of the paper is that we can get a deep network to play chess by teaching it an evaluation function that takes in 2 positions and outputs the better one. The network can then be used in a modified Alpha-Beta pruning algorithm, where instead of comparing between two positions' evaluations (as numbers), we compare between the positions themselves.
