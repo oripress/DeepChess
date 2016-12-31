@@ -12,7 +12,7 @@ This model was trained with:
 
 Run `python train.py` to train the model on the data available in the folder 'pGames'
 
-##To mine a different dataset:##
+###To mine a different dataset:###
 Run `python get_data.py`, but be sure to change the file name in the source code.
 
 ###Some notes:####
