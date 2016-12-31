@@ -7,10 +7,11 @@ Install [python-chess](https://pypi.python.org/pypi/python-chess), and then from
 
 ###To train:###
 This model was trained with:
--CUDA 7.5
--Tensorflow 0.10.0
+- CUDA 7.5
+- Tensorflow 0.10.0
 
 Run `python train.py` to train the model on the data available in the folder 'pGames'
+Some older network checkpoints can be found in the folder 'net'.
 
 ###To mine a different dataset:###
 Run `python get_data.py`, but be sure to change the file name in the source code.
