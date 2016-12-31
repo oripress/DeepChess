@@ -13,15 +13,6 @@ def netPredict(first, second):
 	global x
 	global y
 
-	if first is int:
-		print(first)
-		print(second)
-		return (second, first)
-	if second is int:
-		print(first)
-		print(second)
-		return (first, second)
-
 	x_1 = bitifyFEN(beautifyFEN(first.fen()))
 	x_2 = bitifyFEN(beautifyFEN(second.fen()))
 	toEval = [[x_1], [x_2]]
@@ -41,13 +32,12 @@ def alphabeta(node, depth, alpha, beta, maximizingPlayer):
 			cur = copy.copy(node)
 			cur.push(move)
 			if v == -1:
-				v = cur
-			else:
-				v = netPredict(v, alphabeta(cur, depth-1, alpha, beta, False))[0]
+				v = alphabeta(cur, depth-1, alpha, beta, False) 
 			if alpha == -1:
 				alpha = v
-			else:
-				alpha = netPredict(alpha, v)[0] 
+		
+			v = netPredict(v, alphabeta(cur, depth-1, alpha, beta, False))[0]
+			alpha = netPredict(alpha, v)[0] 
 			if beta != 1:
 				if netPredict(alpha, beta)[0] == alpha:
 					break
@@ -58,20 +48,18 @@ def alphabeta(node, depth, alpha, beta, maximizingPlayer):
 			cur = copy.copy(node)
 			cur.push(move)
 			if v == 1:
-				v = cur
-			else:
-				v = netPredict(v, alphabeta(cur, depth-1, alpha, beta, True))[1]
+				v = alphabeta(cur, depth-1, alpha, beta, True) 
 			if beta == 1:
 				beta = v
-			else:
-				beta = netPredict(beta, v)[1] 
+			
+			v = netPredict(v, alphabeta(cur, depth-1, alpha, beta, True))[1]
+			beta = netPredict(beta, v)[1] 
 			if alpha != -1:
 				if netPredict(alpha, beta)[0] == alpha:
 					break
 		return v 
 
-def computerMove(board):
-	depth = 3 
+def computerMove(board, depth):
 	alpha = -1
 	beta = 1
 	v = -1
@@ -79,17 +67,17 @@ def computerMove(board):
 		cur = copy.copy(board)
 		cur.push(move)
 		if v == -1:
-			v = cur
+			v = alphabeta(cur, depth-1, alpha, beta, False)
 			bestMove = move
+			if alpha == -1:
+				alpha = v
 		else:
 			new_v = netPredict(alphabeta(cur, depth-1, alpha, beta, False), v)[0]
 			if new_v != v:
 				bestMove = move
 				v = new_v
-			if alpha == -1:
-				alpha = v
-			else:
-				alpha = netPredict(alpha, v)[0] 
+			alpha = netPredict(alpha, v)[0] 
+
 	print(bestMove)	
 	board.push(bestMove)
 	return board
@@ -108,14 +96,17 @@ def playerMove(board):
 def playGame():
 	moveTotal = 0;
 	board = chess.Board()
+	depth = raw_input("Enter search depth \n")
+	depth = int(depth)
 	while board.is_game_over() == False:
 		print(board)
 		if moveTotal % 2 == 1:
 			board = playerMove(board)
 		else:
-			board =	computerMove(board)
+			board =	computerMove(board, depth)
 		moveTotal = moveTotal+1
-
+	
+	print(board)
 	print("Game is over")
 		
 
