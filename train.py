@@ -8,12 +8,12 @@ TRAIN_AUTOENCODER = 0
 TRAIN_NET = 1
 
 TOTAL_AE = 250000
-TOTAL_MLP = 600000
+TOTAL_MLP = 750000
 
 BS_AE = 20
 BS_MLP = 50
 EPOCHS_AE = 50 
-EPOCHS_MLP = 203 
+EPOCHS_MLP = 201 
 RATE_AE = 0.005
 DECAY_AE = 0.98
 RATE_MLP = 0.005
@@ -22,14 +22,14 @@ DECAY_MLP = 0.98
 BIAS = 0.15
 
 N_INPUT = 769 
-ENCODING_1 = 400 
-ENCODING_2 = 100 
-ENCODING_3 = 100
+ENCODING_1 = 600 
+ENCODING_2 = 400 
+ENCODING_3 = 200
 ENCODING_4 = 100
 
 HIDDEN_1 = 200
-HIDDEN_2 = 100 
-HIDDEN_3 = 100
+HIDDEN_2 = 400 
+HIDDEN_3 = 200
 HIDDEN_4 = 100 
 N_OUT = 2
 
@@ -38,7 +38,7 @@ VOLUME_SIZE = 25000
 export_path = 'net/exports'
 
 #Get the data from the game files
-validation_test, validation_test_l = getTest(N_INPUT, 10, 14)
+validation_test, validation_test_l = getTest(N_INPUT, 40, 44)
 whiteWins, blackWins = getTrain(N_INPUT, TOTAL_MLP, VOLUME_SIZE)
 
 # init
@@ -156,15 +156,15 @@ def model(games, weights, biases):
 	second_board = tf.squeeze(tf.slice(games, [0,1,0], [-1, 1, -1]), squeeze_dims=[1])
 	[first_board, second_board] = tf.unpack(games, axis=1)
 	
-	firstboard_encoding = encode(first_board, weights, biases, 3)
-	secondboard_encoding = encode(second_board, weights, biases, 3)
+	firstboard_encoding = encode(first_board, weights, biases, 4)
+	secondboard_encoding = encode(second_board, weights, biases, 4)
 
 	h_1 = tf.concat(1, [firstboard_encoding,secondboard_encoding])
 	h_2 = fully_connected(h_1, weights['w1'], biases['b1'])
 	h_3 = fully_connected(h_2, weights['w2'], biases['b2'])
-	#h_4 = fully_connected(h_3, weights['w3'], biases['b3'])
+	h_4 = fully_connected(h_3, weights['w3'], biases['b3'])
 
-	pred = tf.add(tf.matmul(h_3, weights['w4']), biases['out'], name="output")
+	pred = tf.add(tf.matmul(h_4, weights['w4']), biases['out'], name="output")
 	return pred
 
 
